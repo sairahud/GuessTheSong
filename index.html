@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10-Button Music Player</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #121212;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        /* Responsive layout for smaller screens */
+        @media (max-width: 600px) {
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .music-btn {
+            background: #1db954; /* Spotify green */
+            color: white;
+            border: none;
+            padding: 25px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .music-btn:hover {
+            background: #1ed760;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(29, 185, 84, 0.4);
+        }
+
+        .music-btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Class to show which track is currently playing */
+        .music-btn.playing {
+            background: #ffffff;
+            color: #1db954;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Music Soundboard</h1>
+
+    <div class="grid-container">
+        <button class="music-btn" onclick="playMusic(1, this)">1</button>
+        <button class="music-btn" onclick="playMusic(2, this)">2</button>
+        <button class="music-btn" onclick="playMusic(3, this)">3</button>
+        <button class="music-btn" onclick="playMusic(4, this)">4</button>
+        <button class="music-btn" onclick="playMusic(5, this)">5</button>
+        <button class="music-btn" onclick="playMusic(6, this)">6</button>
+        <button class="music-btn" onclick="playMusic(7, this)">7</button>
+        <button class="music-btn" onclick="playMusic(8, this)">8</button>
+        <button class="music-btn" onclick="playMusic(9, this)">9</button>
+        <button class="music-btn" onclick="playMusic(10, this)">10</button>
+    </div>
+
+    <script>
+        // Global variable to keep track of the currently playing audio
+        let currentAudio = null;
+        let currentButton = null;
+
+        // Map button numbers to your actual audio file names/paths
+        const audioFiles = {
+            1: 'audio/track1.mp3',
+            2: 'audio/track2.mp3',
+            3: 'audio/track3.mp3',
+            4: 'audio/track4.mp3',
+            5: 'audio/track5.mp3',
+            6: 'audio/track6.mp3',
+            7: 'audio/track7.mp3',
+            8: 'audio/track8.mp3',
+            9: 'audio/track9.mp3',
+            10: 'audio/track10.mp3'
+        };
+
+        function playMusic(trackNumber, buttonElement) {
+            // If the clicked button is already playing, pause it
+            if (currentAudio && currentButton === buttonElement) {
+                currentAudio.pause();
+                buttonElement.classList.remove('playing');
+                currentAudio = null;
+                currentButton = null;
+                return;
+            }
+
+            // Stop any music that is currently playing
+            if (currentAudio) {
+                currentAudio.pause();
+                currentButton.classList.remove('playing');
+            }
+
+            // Create new audio object and play it
+            currentAudio = new Audio(audioFiles[trackNumber]);
+            currentButton = buttonElement;
+            
+            currentAudio.play().catch(error => {
+                console.log("Audio play failed. Make sure your file paths are correct!", error);
+                alert(`Could not play track ${trackNumber}. Make sure you have placed the correct audio files in your project folder.`);
+            });
+
+            // Add visual active state
+            buttonElement.classList.add('playing');
+
+            // Remove active state when the music ends naturally
+            currentAudio.onended = function() {
+                buttonElement.classList.remove('playing');
+                currentAudio = null;
+                currentButton = null;
+            };
+        }
+    </script>
+
+</body>
+</html>
